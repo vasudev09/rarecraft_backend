@@ -155,14 +155,60 @@ class ProfileView(APIView):
     def post(self, request):
         try:
             customer = models.Customer.objects.get(user=request.user)
+            user = customer.user
+            data = request.data.copy()
+            if "email" in data:
+                data.pop("email")
+            username = data.get("username")
+            password = data.get("password")
+
+            if username:
+                if len(username) < 3 or len(username) > 30:
+                    return Response(
+                        {"message": "Username must be between 3 and 30 characters."},
+                        status=400,
+                    )
+
+            if password:
+                if len(password) < 8:
+                    return Response(
+                        {"message": "Password must be at least 8 characters."},
+                        status=400,
+                    )
+
+            # Update username, mobile, and image
             serializer = serializers.CustomerSerializer(
-                customer, data=request.data, partial=True
+                customer, data=data, partial=True
             )
             if serializer.is_valid():
                 serializer.save()
-                return Response({"message": "Success"}, status=200)
+
+                if username:
+                    user.username = username
+                    user.save()
+                if password:
+                    user.set_password(password)
+                    user.save()
+
+                return Response(
+                    {"message": "Profile updated successfully."}, status=200
+                )
             return Response(serializer.errors, status=400)
         except models.Customer.DoesNotExist:
             return Response({"message": "Profile not found."}, status=404)
         except Exception as e:
             return Response({"message": str(e)}, status=500)
+
+
+class MyProductsView(generics.ListAPIView):
+    serializer_class = serializers.ProductSerializer
+
+    def get_queryset(self):
+        return models.Product.objects.filter(vendor__user=self.request.user)
+
+
+class MyBrandsView(generics.ListAPIView):
+    serializer_class = serializers.BrandSerializer
+
+    def get_queryset(self):
+        return models.Brand.objects.filter(vendor__user=self.request.user)

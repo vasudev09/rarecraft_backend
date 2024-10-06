@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import ArrayField
 
 
 # Customer
@@ -71,6 +72,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=12, decimal_places=2)
     discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     details = models.JSONField(default=list)
+    images = ArrayField(models.CharField(), default=list)
 
     def __str__(self):
         return self.name
@@ -84,7 +86,7 @@ class Review(models.Model):
     review_by = models.CharField(max_length=100)
     rating = models.PositiveSmallIntegerField()
     review = models.TextField()
-    likes = models.PositiveIntegerField(default=0)
+    likes = ArrayField(models.PositiveIntegerField(), default=list)
 
     def __str__(self):
         return f"Review by {self.review_by} on {self.product.name}"

@@ -73,4 +73,5 @@ class ProductSerializer(serializers.ModelSerializer):
             "discount",
             "details",
             "reviews",
+            "images",
         ]

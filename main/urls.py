@@ -17,11 +17,11 @@ urlpatterns = [
     # path("brands"),
     # path("categories"),
     # path("review"),
-    # path("image"),
+    # path("review/like")
     # Profile
     path("profile", views.ProfileView.as_view(), name="profile"),
-    # path("myproducts"),
-    # path("mybrands"),
+    path("myproducts", views.MyProductsView.as_view(), name="myproducts"),
+    path("mybrands", views.MyBrandsView.as_view(), name="mybrands"),
 ]
 
 urlpatterns += router.urls
