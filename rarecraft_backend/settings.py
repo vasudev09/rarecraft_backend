@@ -142,8 +142,7 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": ["main.authentication.CustomJWTAuthentication"],
-    "DEFAULT_PAGINATION_CLASS": "main.pagination.CustomPagination",
-    "PAGE_SIZE": 10,
+    "DEFAULT_PAGINATION_CLASS": None,
 }
 
 
