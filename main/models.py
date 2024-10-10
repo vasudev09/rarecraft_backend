@@ -1,13 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
+from django.utils import timezone
 
 
 # Customer
 class Customer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     mobile = models.PositiveBigIntegerField(null=True, blank=True, unique=True)
-    image = models.CharField()
+    image = models.CharField(max_length=1000)
 
     def __str__(self):
         return self.user.username
@@ -15,9 +16,9 @@ class Customer(models.Model):
 
 # Category
 class Category(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    slug = models.SlugField(max_length=50, unique=True)
-    image = models.CharField()
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
+    image = models.CharField(max_length=1000)
 
     def __str__(self):
         return self.name
@@ -26,10 +27,10 @@ class Category(models.Model):
 # Brand
 class Brand(models.Model):
     vendor = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50, unique=True)
-    slug = models.SlugField(max_length=50, unique=True)
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
     description = models.TextField()
-    image = models.CharField()
+    image = models.CharField(max_length=1000)
 
     def __str__(self):
         return self.name
@@ -60,10 +61,10 @@ class Product(models.Model):
         on_delete=models.CASCADE,
         related_name="products",
     )
-    name = models.CharField()
-    description = models.CharField()
+    name = models.CharField(max_length=500)
+    description = models.CharField(max_length=1000)
     content = models.TextField(null=True, blank=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(max_length=500, unique=True)
     tags = models.ManyToManyField(
         ProductTag,
         blank=True,
@@ -72,7 +73,8 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=12, decimal_places=2)
     discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     details = models.JSONField(default=list)
-    images = ArrayField(models.CharField(), default=list)
+    images = ArrayField(models.CharField(max_length=1000), default=list)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.name
@@ -87,6 +89,7 @@ class Review(models.Model):
     rating = models.PositiveSmallIntegerField()
     review = models.TextField()
     likes = ArrayField(models.PositiveIntegerField(), default=list)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"Review by {self.review_by} on {self.product.name}"

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Customer, Category, Brand, ProductTag, Product, Review
 from django.contrib.auth.models import User
+from django.db.models import Avg
 
 
 # User Serializer (for Customer)
@@ -28,11 +29,34 @@ class CategorySerializer(serializers.ModelSerializer):
 
 # Brand Serializer
 class BrandSerializer(serializers.ModelSerializer):
-    vendor = CustomerSerializer(read_only=True)
+    total_products = serializers.SerializerMethodField()
+    reviews = serializers.SerializerMethodField()
 
     class Meta:
         model = Brand
-        fields = ["id", "vendor", "name", "slug", "description", "image"]
+        fields = [
+            "id",
+            "vendor",
+            "name",
+            "description",
+            "slug",
+            "image",
+            "total_products",
+            "reviews",
+        ]
+
+    def get_total_products(self, obj):
+        return obj.products.count()
+
+    def get_reviews(self, obj):
+        avg_review = obj.products.aggregate(Avg("reviews__rating"))[
+            "reviews__rating__avg"
+        ]
+        total_reviews = Review.objects.filter(product__brand=obj).count()
+        return {
+            "avg_review": avg_review if avg_review is not None else 0.0,
+            "total_reviews": total_reviews,
+        }
 
 
 # ProductTag Serializer
@@ -46,12 +70,19 @@ class ProductTagSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
-        fields = ["id", "product", "review_by", "rating", "review", "likes"]
+        fields = [
+            "id",
+            "product",
+            "review_by",
+            "rating",
+            "review",
+            "likes",
+            "created_at",
+        ]
 
 
 # Product Serializer
 class ProductSerializer(serializers.ModelSerializer):
-    vendor = CustomerSerializer(read_only=True)
     brand = BrandSerializer(read_only=True)
     category = CategorySerializer(read_only=True)
     tags = ProductTagSerializer(many=True, read_only=True)
@@ -61,7 +92,6 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = [
             "id",
-            "vendor",
             "brand",
             "category",
             "name",
