@@ -290,39 +290,42 @@ class BrandListView(generics.ListAPIView):
 
 class ProductListView(generics.ListAPIView):
     permission_classes = [AllowAny]
-    queryset = models.Product.objects.all()
     serializer_class = serializers.ProductSerializer
 
     # filters
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = (
+            models.Product.objects.select_related("category", "brand")
+            .prefetch_related("tags")
+            .all()
+        )
 
-        category_slug = self.request.query_params.get("category")
-        if category_slug:
-            queryset = queryset.filter(category__slug=category_slug)
+        if "search" in self.request.GET and self.request.GET["search"]:
+            search_query = self.request.GET["search"]
+            queryset = queryset.filter(Q(name__icontains=search_query))
 
-        brand_slug = self.request.query_params.get("brand")
-        if brand_slug:
-            queryset = queryset.filter(brand__slug=brand_slug)
-
-        min_price = self.request.query_params.get("min_price")
-        if min_price:
-            queryset = queryset.filter(price__gte=min_price)
-
-        max_price = self.request.query_params.get("max_price")
-        if max_price:
-            queryset = queryset.filter(price__lte=max_price)
-
-        search = self.request.query_params.get("search")
-        if search:
-            queryset = queryset.filter(Q(name__icontains=search))
-
-        tag = self.request.query_params.get("tag")
-        if tag:
+        if "tag" in self.request.GET and self.request.GET["tag"]:
+            tag = self.request.GET["tag"]
             queryset = queryset.filter(tags__name__icontains=tag)
 
-        sort_by = self.request.query_params.get("sortby")
-        if sort_by:
+        if "category" in self.request.GET and self.request.GET["category"]:
+            category_slug = self.request.GET["category"]
+            queryset = queryset.filter(category__slug=category_slug)
+
+        if "brand" in self.request.GET and self.request.GET["brand"]:
+            brand_slug = self.request.GET["brand"]
+            queryset = queryset.filter(brand__slug=brand_slug)
+
+        if "min_price" in self.request.GET and self.request.GET["min_price"]:
+            min_price = self.request.GET["min_price"]
+            queryset = queryset.filter(price__gte=min_price)
+
+        if "max_price" in self.request.GET and self.request.GET["max_price"]:
+            max_price = self.request.GET["max_price"]
+            queryset = queryset.filter(price__lte=max_price)
+
+        if "sortby" in self.request.GET and self.request.GET["sortby"]:
+            sort_by = self.request.GET["sortby"]
             if sort_by == "alphabetic":
                 queryset = queryset.order_by("name")
             elif sort_by == "price_htl":

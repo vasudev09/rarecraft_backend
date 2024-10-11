@@ -79,6 +79,11 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        indexes = [
+            models.Index(fields=["category", "brand", "price"]),
+        ]
+
 
 # Review
 class Review(models.Model):
