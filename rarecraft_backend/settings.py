@@ -34,15 +34,17 @@ ALLOWED_HOSTS = config(
     cast=lambda v: [s.strip() for s in v.split(",")],
 )
 
+
 CORS_ALLOWED_ORIGINS = config(
     "CORS_ALLOWED_ORIGINS",
     default="http://localhost:3000",
     cast=lambda v: [s.strip() for s in v.split(",")],
 )
 CORS_ALLOW_CREDENTIALS = config("CORS_ALLOW_CREDENTIALS", default=True, cast=bool)
-
-
-CORS_ALLOW_HEADERS = list(default_headers) + ["cache-control"]
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "cache-control",
+    "access-control-allow-origin",
+]
 
 
 # Application definition
