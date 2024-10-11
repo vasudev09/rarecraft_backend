@@ -836,3 +836,33 @@ def like_review(request):
     review.save()
 
     return Response({"message": message, "likes": review.likes}, status=200)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def product_slugs(request):
+    try:
+        product_slugs = models.Product.objects.values_list("slug", flat=True)
+        return Response(list(product_slugs))
+    except Exception as e:
+        return Response([], status=404)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def brand_slugs(request):
+    try:
+        brand_slugs = models.Brand.objects.values_list("slug", flat=True)
+        return Response(list(brand_slugs))
+    except Exception as e:
+        return Response([], status=404)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def category_slugs(request):
+    try:
+        category_slugs = models.Category.objects.values_list("slug", flat=True)
+        return Response(list(category_slugs))
+    except Exception as e:
+        return Response([], status=404)

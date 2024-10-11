@@ -22,6 +22,10 @@ urlpatterns = [
     path("profile", views.ProfileView.as_view(), name="profile"),
     path("myproducts", views.MyProductsView.as_view(), name="myproducts"),
     path("mybrands", views.MyBrandsView.as_view(), name="mybrands"),
+    # slugs
+    path("brand/slugs", views.brand_slugs, name="brands-slug-list"),
+    path("product/slugs", views.product_slugs, name="products-slug-list"),
+    path("category/slugs", views.category_slugs, name="categories-slug-list"),
 ]
 
 urlpatterns += router.urls
