@@ -20,7 +20,7 @@ class Command(BaseCommand):
         for path in static_paths:
             try:
                 url = f"{base_url}{path}"
-                response = requests.head(url, timeout=15)
+                response = requests.head(url, timeout=30)
                 if response.status_code != 200:
                     self.stdout.write(f"\033[91mBroken link found: {url}\033[0m")
                 else:
@@ -32,7 +32,7 @@ class Command(BaseCommand):
         for product in products:
             try:
                 product_url = f"{base_url}/product/{product.slug}"
-                response = requests.head(product_url, timeout=6)
+                response = requests.head(product_url, timeout=10)
                 if response.status_code != 200:
                     self.stdout.write(
                         f"\033[91mBroken link found: {product_url}\033[0m"
@@ -47,7 +47,7 @@ class Command(BaseCommand):
         for brand in brands:
             try:
                 brand_url = f"{base_url}/brand/{brand.slug}"
-                response = requests.head(brand_url, timeout=6)
+                response = requests.head(brand_url, timeout=10)
                 if response.status_code != 200:
                     self.stdout.write(f"\033[91mBroken link found: {brand_url}\033[0m")
                 else:
@@ -60,7 +60,7 @@ class Command(BaseCommand):
         for brand in brands:
             try:
                 brand_products_url = f"{base_url}/products/brand/{brand.slug}"
-                response = requests.head(brand_products_url, timeout=6)
+                response = requests.head(brand_products_url, timeout=10)
                 if response.status_code != 200:
                     self.stdout.write(
                         f"\033[91mBroken link found: {brand_products_url}\033[0m"
@@ -75,7 +75,7 @@ class Command(BaseCommand):
         for category in categories:
             try:
                 category_products_url = f"{base_url}/products/category/{category.slug}"
-                response = requests.head(category_products_url, timeout=6)
+                response = requests.head(category_products_url, timeout=10)
                 if response.status_code != 200:
                     self.stdout.write(
                         f"\033[91mBroken link found: {category_products_url}\033[0m"
