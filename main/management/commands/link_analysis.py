@@ -20,7 +20,7 @@ class Command(BaseCommand):
         for path in static_paths:
             try:
                 url = f"{base_url}{path}"
-                response = requests.head(url, timeout=30)
+                response = requests.head(url, timeout=60)
                 if response.status_code != 200:
                     self.stdout.write(f"\033[91mBroken link found: {url}\033[0m")
                 else:
