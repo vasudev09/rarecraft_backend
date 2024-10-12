@@ -26,6 +26,8 @@ urlpatterns = [
     path("brand/slugs", views.brand_slugs, name="brands-slug-list"),
     path("product/slugs", views.product_slugs, name="products-slug-list"),
     path("category/slugs", views.category_slugs, name="categories-slug-list"),
+    # cron
+    path("run_link_analysis", views.run_link_analysis, name="rarecraft-link-analysis"),
 ]
 
 urlpatterns += router.urls
