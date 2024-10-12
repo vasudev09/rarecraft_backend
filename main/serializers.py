@@ -104,4 +104,5 @@ class ProductSerializer(serializers.ModelSerializer):
             "details",
             "reviews",
             "images",
+            "created_at",
         ]
