@@ -21,7 +21,7 @@ from django.utils.text import slugify
 from supabase import create_client, Client
 import json
 from random import choice, shuffle
-
+from django.core.management import call_command
 
 # Initialize Supabase client
 SUPABASE_URL = config("SUPABASE_URL")
@@ -866,3 +866,18 @@ def category_slugs(request):
         return Response(list(category_slugs))
     except Exception as e:
         return Response([], status=404)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def run_link_analysis(request):
+    id = request.data.get("id")
+    if not id:
+        return Response({"message": "CRON ID is required"}, status=400)
+    try:
+        if id == config("CRON_JOB_ID"):
+            call_command("link_analysis")
+            return Response({"message": "Link analysis started."}, status=200)
+        return Response({"message": "ID failed to match"}, status=400)
+    except Exception as e:
+        return Response({"message": "Error", "error": str(e)}, status=500)
